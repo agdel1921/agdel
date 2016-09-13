@@ -21,7 +21,7 @@ start.append(datetime.datetime.now().time())
 # set the working directory
 #path = "D:/training/randomProg/cryptoAnon/"
 
-path = "D:/training/TWG_overall/data_harmonisation/twg_ag/trial/"
+path = "D:/training/TWG_overall/data_harmonisation/JPN/twg_ag/trial/"
 
 os.chdir(path)
 fls=os.listdir(path)
@@ -41,14 +41,14 @@ inpColsLower = [ui for ui in inpColsLower1 if ui not in inpo and (inpo.append(ui
 
 inpColsLower.append('randnum')
 inpColsLower.append('hash')
-inpColsLower.append('checksum')
 print inpColsLower
-
 
 # run the program for all XLSX files in the path
 for a in fls:
     if a[-4:]=='xlsx':   
         start.append(datetime.datetime.now().time())
+        inpColsLower.append(a[:-4].strip().lower()+'_checksum')
+
         # read in the excel file and store it in a DF (data frame) called m
         print a        
         xlsxPd = pd.read_excel(a, header=0)
@@ -74,7 +74,7 @@ for a in fls:
         # add the 3 new lists to the DF being used
         xlsxPd1['randNum'] = pd.Series(num)
         xlsxPd1['hash'] = pd.Series(encrpyt)
-        xlsxPd1['checksum'] = pd.Series(chkSum) 
+        xlsxPd1[a[:-4].strip().lower()+'_checksum'] = pd.Series(chkSum) 
         col = xlsxPd1.columns
         col = [m.strip() for m in col]
         colLower = [m.strip().lower() for m in col]
@@ -92,7 +92,7 @@ for a in fls:
         for l in colAnon:
             print col[l]
             pdAnon[col[l]] = xlsxPd1.ix[:,l:(l+1)].copy()
-        remCols = [l for l in colAnon if col[l]!='checksum']
+        remCols = [l for l in colAnon if col[l]!=a[:-4].strip().lower()+'_checksum']
         xlsxPd1.drop(xlsxPd1.columns[remCols], axis=1, inplace=True)
         
         # export the Anonymised & PII files to specified path
@@ -106,7 +106,8 @@ for a in fls:
 for a in fls:
     if a[-3:]=='csv':   
         start.append(datetime.datetime.now().time())
-        
+        inpColsLower.append(a[:-4].strip().lower()+'_checksum')
+
         # read in the excel file and store it in a DF (data frame) called m
         print a        
         xlsxPd = pd.read_csv(a, header=0, low_memory=False)
@@ -132,7 +133,7 @@ for a in fls:
         # add the 3 new lists to the DF being used
         xlsxPd1['randNum'] = pd.Series(num)
         xlsxPd1['hash'] = pd.Series(encrpyt)
-        xlsxPd1['checksum'] = pd.Series(chkSum) 
+        xlsxPd1[a[:-4].strip().lower()+'_checksum'] = pd.Series(chkSum) 
         col = xlsxPd1.columns
         col = [m.strip() for m in col]
         colLower = [m.strip().lower() for m in col]
@@ -150,7 +151,7 @@ for a in fls:
         for l in colAnon:
             print col[l]
             pdAnon[col[l]] = xlsxPd1.ix[:,l:(l+1)].copy()
-        remCols = [l for l in colAnon if col[l]!='checksum']
+        remCols = [l for l in colAnon if col[l]!=a[:-4].strip().lower()+'_checksum']
         xlsxPd1.drop(xlsxPd1.columns[remCols], axis=1, inplace=True)
         
         # export the Anonymised & PII files to specified path
