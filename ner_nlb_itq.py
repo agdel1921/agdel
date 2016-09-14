@@ -24,6 +24,7 @@ print distutils.sysconfig.get_python_lib()+'/nltk/tag/'
 from nltk.tag.stanford import POSTagger
 from nltk.tag.stanford import NERTagger
 
+
 # Set JAVAHOME variable as below
 import os
 java_path = "C:/Program Files (x86)/Java/jre1.8.0_51/bin/java.exe"
@@ -42,6 +43,7 @@ english_nertagger = NERTagger('D:/training/NER/Stanford Setup/Stanford-20160909T
 path = "D:/training/NER/ITQ/Attachment9_Sample Test Articles/"
 os.chdir(path)
 fls=os.listdir(path)
+
 
 #fl = [fls[1]]
 txt=""
@@ -129,6 +131,13 @@ for a in fls:
         wordDf = pd.DataFrame(depthWordCat)
         wordDf2 = wordDf.transpose()
         wordDf2.drop(wordDf2.columns[[oLoc]], axis=1, inplace=True)
-        wordDfFinal = wordDf2.drop_duplicates()
         outputDest = a[:-4]+'_NER.csv'
-        wordDfFinal.to_csv(outputDest, index=False, header = False)
+        temp =[[] for u in wordDf2.columns]
+        for h in range(len(wordDf2.columns)):
+            temp[h] = [e for e in np.unique(wordDf2[wordDf2.columns[h]].ravel()) if type(e)!=float]
+        t2 = pd.DataFrame(temp)
+        t2 = t2.transpose()
+        t2.columns = [r for r in uniqCat if r!='O']
+        t2 = t2.drop(t2.index[[0]])
+        t2.to_csv(outputDest, index=False, header = True)
+        
