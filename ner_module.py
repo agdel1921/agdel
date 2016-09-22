@@ -40,7 +40,7 @@ english_nertagger = NERTagger('D:/training/NER/Stanford Setup/Stanford-20160909T
 
 
 # set the working directory
-path = "D:/training/try/"
+path = "D:/training/hansard/try/"
 os.chdir(path)
 fls=os.listdir(path)
 
@@ -54,6 +54,7 @@ for a in fls:
         f = open(a, 'r')
         txt = f.read()
         text1 = ""
+        print a
         for sentSplit in txt.split('\xc2\xa0'):
             text1 = text1 + ' ' + sentSplit
         text2 = ""
