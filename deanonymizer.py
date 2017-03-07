@@ -37,7 +37,11 @@ for fil in fls:
             if check in x:
                 piiPd = pd.read_csv(x, header=0, low_memory=False)
                 finPd = anonPd.copy()
-                finPd = pd.merge(left=finPd, right=piiPd, on='checksum', how="left", indicator=True)
+                for op in finPd.columns:
+                    if 'checksum' in op:
+                        csLocation = op
+                        break;
+                finPd = pd.merge(left=finPd, right=piiPd, on=csLocation, how="left", indicator=True)
                 finPd.to_csv(fil_name+"_final.csv",sep=',', index=False)
         #po=[]
         #for i in finPd.columns:
