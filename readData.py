@@ -59,4 +59,22 @@ with open('hello.txt', 'r') as f:
         words = line.split()
         print words            
 
-    
+# update cell values for DF df
+#
+# OG DF
+#       x    y
+#   A  NaN  NaN
+#   B  NaN  NaN
+#   C  NaN  NaN
+#
+#       x    y
+#   A  NaN  NaN
+#   B  NaN  NaN
+#   C  10  NaN
+df = pd.DataFrame(columns=['x','y'], index = ['A','B','C'])
+df.set_value('C', 'x', 10)
+df['x']['C'] = 10
+df.ix['C','x'] = 10
+df.xs('C', copy=False)['x'] = 10
+
+
