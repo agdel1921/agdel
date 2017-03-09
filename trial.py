@@ -26,7 +26,7 @@ path = "D:/training/pd_ag/chk/"
 os.chdir(path)
 fls2=os.listdir(path)
 
-
+fls2 = ['170306 InsurTech Data Model_trial.xlsx']
 # alternative way of loading the data set
 #xls_file = pd.ExcelFile('IDA2Data_Model_160801.xlsx')
 #df = xls_file.parse('Sheet1')
@@ -198,7 +198,8 @@ for a1 in fls2:
                         prp = "owl:ObjectProperty"
                     if str(x)!="subClassOf":
                         if "Data" in prp:
-                            print "latize:"+x[:1].lower()+x[1:]+" a "+prp," ;"
+                            if "(" in x:
+                            print "latize:"+x[:1].title()+x[1:]+" a "+prp," ;"
                             print "    rdfs:range ",y+" ;"
                             dmn =""            
                             for z1 in o:
@@ -220,14 +221,14 @@ for a1 in fls2:
                             print '    rdfs:domain ',dmn,' ;'
                             print '    rdfs:label "'+rev(x)+ '" .\n\n'
                             # now print the Data Type Property for the column
-                            print "latize:"+x+" a owl:DatatypeProperty;"
-                            print "    rdfs:range ",objSplit[1]," ;"
-                            dmn =""            
-                            for z1 in o:
-                                dmn = dmn + 'latize:'+z1[:1].title()+z1[1:] + ', '
-                            dmn=dmn[:-2]
-                            print '    rdfs:domain ',dmn,' ;'
-                            print '    rdfs:label "'+rev(x)+ '" .\n\n'
+                            #print "latize:"+x+" a owl:DatatypeProperty;"
+                            #print "    rdfs:range ",objSplit[1]," ;"
+                            #dmn =""            
+                            #for z1 in o:
+                            #    dmn = dmn + 'latize:'+z1[:1].title()+z1[1:] + ', '
+                            #dmn=dmn[:-2]
+                            #print '    rdfs:domain ',dmn,' ;'
+                            #print '    rdfs:label "'+rev(x)+ '" .\n\n'
                     else:
                         dmn =""
                         if y not in ranges.columns:
@@ -291,14 +292,14 @@ for a1 in fls2:
                             print >>  f, '    rdfs:domain ',dmn,' ;'
                             print >>  f, '    rdfs:label "'+rev(x)+ '" .\n\n'
                             # now print the Data Type Property for the column
-                            print >>  f, "latize:"+x+" a owl:DatatypeProperty;"
-                            print >>  f, "    rdfs:range ",objSplit[1]," ;"
-                            dmn =""            
-                            for z1 in o:
-                                dmn = dmn + 'latize:'+z1[:1].title()+z1[1:] + ', '
-                            dmn=dmn[:-2]
-                            print >>  f, '    rdfs:domain ',dmn,' ;'
-                            print >>  f, '    rdfs:label "'+rev(x)+ '" .\n\n'
+                            #print >>  f, "latize:"+x+" a owl:DatatypeProperty;"
+                            #print >>  f, "    rdfs:range ",objSplit[1]," ;"
+                            #dmn =""            
+                            #for z1 in o:
+                            #    dmn = dmn + 'latize:'+z1[:1].title()+z1[1:] + ', '
+                            #dmn=dmn[:-2]
+                            #print >>  f, '    rdfs:domain ',dmn,' ;'
+                            #print >>  f, '    rdfs:label "'+rev(x)+ '" .\n\n'
                     else:
                         dmn =""
                         if y not in ranges.columns:
@@ -316,78 +317,3 @@ for a1 in fls2:
                             print >>  f, '    rdfs:label "' +rev(z1)+'". \n\n'
                 print >>  f, "\n\n"
         f.close()
-    """
-        # print the output to the field
-        for s1 in range(len(ranges.index)):
-            x=ranges.index[s1]
-            df2 = ranges.xs(x)
-            typ1 = list(numpy.unique(df2))
-            typ = [x78 for x78 in typ1 if type(x78)!=float]
-            #print x, df2, typ
-            #print x,typ
-            for y in typ:
-                if type(y)!=str:
-                    o=[]
-                    for z in df2.index:
-                        if (df2[z]==y):
-                            o.append(z)
-                            
-                    if ("xsd:" in y):
-                        prp = "owl:DatatypeProperty"
-                    else:
-                        prp = "owl:ObjectProperty"
-                        y=y[:1].title()+to_camel_case(y[1:])
-                    if str(x)!="subClassOf":
-                        print >> f, "latize:",x+" a "+prp," ;"
-                        print >> f,"    rdfs:range ",y," ;"
-                        dmn =""            
-                        for z1 in o:
-                            dmn = dmn + 'latize:'+z1[:1].title()+z1[1:] + ', '
-                        dmn=dmn[:-2]
-                        print >> f,'    rdfs:domain ',dmn,' ;'
-                        print >> f,'    rdfs:label "',rev(x), '" .'
-                    else:
-                        dmn =""   
-                        if y not in ranges.columns:
-                            if y not in parentClassPrint:
-                                print >> f , "latize:"+y + " a owl:Class ;"
-                                print >> f ,"    rdfs:label '" +y+"'.\n\n"
-                                parentClassPrint.append(y)         
-                        for z1 in o:
-                            dmn=""
-                            dmn = dmn + 'latize:'+z1[:1].title()+z1[1:]
-                            print >> f , dmn + " a owl:Class ;"
-                            print >> f , "    rdfs:subClassOf latize:"+y
-                            print >> f , "    rdfs:label '" +rev(z1)+"'. \n\n"
-                print >> f , "\n\n"
-		
-#            
-#        for s1 in range(len(ranges.index)):
-#            x=ranges.index[s1]
-#            df2 = ranges.xs(x)
-#            typ1 = list(numpy.unique(df2))
-#            typ = [x for x in typ1 if type(x)!=float]
-#            #print x, df2, typ
-#            #print x,typ
-#            for y in typ:
-#                if type(y)!=str:
-#                    o=[]
-#                    for z in df2.index:
-#                        if (df2[z]==y):
-#                            o.append(z)
-#                            
-#                    if ("xsd:" in y):
-#                        prp = "owl:DatatypeProperty"
-#                    else:
-#                        prp = "owl:ObjectProperty"
-#                        y=y[:1].title()+to_camel_case(y[1:])
-#                    print >> f,"latize:"+x+" a "+prp," ;"
-#                    print >> f,"    rdfs:range ",y," ;"
-#                    dmn =""            
-#                    for z1 in o:
-#                        dmn = dmn + 'latize:'+z1[:1].title()+z1[1:] + ', '
-#                    dmn=dmn[:-2]
-#                    print >> f,'    rdfs:domain ',dmn,' ;'
-#                    print >> f,'    rdfs:label "',rev(x), '" .'
-#            print >> f,""
-#        """
