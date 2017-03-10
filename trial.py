@@ -13,6 +13,7 @@ import pandas as pd
 import math
 import re
 import numpy
+import string
 
 
 ## PLEASE READ LINE 57 BEFORE EXECUTION
@@ -77,7 +78,7 @@ for a1 in fls2:
             if len(components)>1:
                 cmp1 = components[0].lower() + "".join(x.title() for x in components[1:])
             else:
-                cmp1 = snake_str
+                cmp1 = snake_str[0].lower()+snake_str[1:]
             return cmp1
         
         
@@ -196,10 +197,58 @@ for a1 in fls2:
                         prp = "owl:DatatypeProperty"
                     else:
                         prp = "owl:ObjectProperty"
+                    openCurve= []
+                                        
+                                        
+                    for xPos in range(len(x)):
+                        if x[xPos]=='(':
+                            openCurve.append(xPos)
+                    if len(openCurve)>0:
+                        for popo in openCurve:
+                            name = x[:popo].strip()+" "+x[popo+1:].strip()
+                    else:
+                        name = x.strip()
+                    
+                    closeCurve= []
+                    for xPos1 in range(len(name)):
+                        if name[xPos1]==')':
+                            closeCurve.append(xPos1)
+                    if len(closeCurve)>0:
+                        for popo1 in closeCurve:
+                            name = name[:popo1].strip()+" "+name[popo1+1:].strip()
+                    
+                    commaPos= []
+                    for xPos2 in range(len(name)):
+                        if name[xPos2]==',':
+                            commaPos.append(xPos2)
+                    if len(commaPos)>0:
+                        print commaPos
+                        for popo2 in commaPos:
+                            #print name[]
+                            name = name[:popo2].strip()+" "+name[popo2+1:].strip()
+                    
+                    fullStopPos= []
+                    for xPos3 in range(len(name)):
+                        if name[xPos3]=='.':
+                            fullStopPos.append(xPos3)
+                    if len(fullStopPos)>0:
+                        print fullStopPos
+                        for popo3 in fullStopPos:
+                            name = name[:popo3].strip()+" "+name[popo3+1:].strip()
+                    
+                    colonStopPos= []
+                    for xPos4 in range(len(name)):
+                        if name[xPos4]==';':
+                            colonStopPos.append(xPos4)
+                    if len(colonStopPos)>0:
+                        for popo4 in colonStopPos:
+                            name = name[:popo4].strip()+" "+name[popo4+1:].strip()
+                                       
+                            
+                    name = to_camel_case(name.strip())
                     if str(x)!="subClassOf":
                         if "Data" in prp:
-                            if "(" in x:
-                            print "latize:"+x[:1].title()+x[1:]+" a "+prp," ;"
+                            print "latize:"+name+" a "+prp," ;"
                             print "    rdfs:range ",y+" ;"
                             dmn =""            
                             for z1 in o:
@@ -211,15 +260,15 @@ for a1 in fls2:
                             # object Properties need two elements listed
                             #     one for the Object itself, detailing the domain and range of classes
                             #     and one for the Data type of the column itself, detailing the domain class & range of values it can accept
-                            objSplit = y.split()
-                            print "latize:"+x+" a "+prp," ;"
-                            print "    rdfs:range ",objSplit[0][:7]+objSplit[0][7:8].title()+objSplit[0][8:]," ;"
+                            #objSplit = y.split()
+                            print "latize:"+name+" a "+prp," ;"
+                            print "    rdfs:range ",y[:7]+to_camel_case(y[7:])," ;"
                             dmn =""            
                             for z1 in o:
                                 dmn = dmn + 'latize:'+z1[:1].title()+z1[1:] + ', '
                             dmn=dmn[:-2]
                             print '    rdfs:domain ',dmn,' ;'
-                            print '    rdfs:label "'+rev(x)+ '" .\n\n'
+                            print '    rdfs:label "'+rev(x).strip()+ '" .\n\n'
                             # now print the Data Type Property for the column
                             #print "latize:"+x+" a owl:DatatypeProperty;"
                             #print "    rdfs:range ",objSplit[1]," ;"
@@ -234,14 +283,14 @@ for a1 in fls2:
                         if y not in ranges.columns:
                             if y not in parentClass:
                                 print "latize:"+y + " a owl:Class ;"
-                                print "    rdfs:label '" +y+"'. \n\n"
+                                print '    rdfs:label "' +y.strip()+'". \n\n'
                                 parentClass.append(y)
                         for z1 in o:
                             dmn=""
                             dmn = dmn + 'latize:'+z1[:1].title()+z1[1:]
                             print dmn + " a owl:Class ;"
                             print "    rdfs:subClassOf latize:"+y
-                            print "    rdfs:label '" +rev(z1)+"'. \n\n"
+                            print '    rdfs:label "'+rev(z1).strip()+'". \n\n'
                 print "\n\n"
         
         # print to file
@@ -264,10 +313,59 @@ for a1 in fls2:
                         prp = "owl:DatatypeProperty"
                     else:
                         prp = "owl:ObjectProperty"
+                    openCurve= []
+                                        
+                                        
+                    for xPos in range(len(x)):
+                        if x[xPos]=='(':
+                            openCurve.append(xPos)
+                    if len(openCurve)>0:
+                        for popo in openCurve:
+                            name = x[:popo].strip()+" "+x[popo+1:].strip()
+                    else:
+                        name = x.strip()
+                    
+                    closeCurve= []
+                    for xPos1 in range(len(name)):
+                        if name[xPos1]==')':
+                            closeCurve.append(xPos1)
+                    if len(closeCurve)>0:
+                        for popo1 in closeCurve:
+                            name = name[:popo1].strip()+" "+name[popo1+1:].strip()
+                    
+                    commaPos= []
+                    for xPos2 in range(len(name)):
+                        if name[xPos2]==',':
+                            commaPos.append(xPos2)
+                    if len(commaPos)>0:
+                        print commaPos
+                        for popo2 in commaPos:
+                            #print name[]
+                            name = name[:popo2].strip()+" "+name[popo2+1:].strip()
+                    
+                    fullStopPos= []
+                    for xPos3 in range(len(name)):
+                        if name[xPos3]=='.':
+                            fullStopPos.append(xPos3)
+                    if len(fullStopPos)>0:
+                        print fullStopPos
+                        for popo3 in fullStopPos:
+                            name = name[:popo3].strip()+" "+name[popo3+1:].strip()
+                    
+                    colonStopPos= []
+                    for xPos4 in range(len(name)):
+                        if name[xPos4]==';':
+                            colonStopPos.append(xPos4)
+                    if len(colonStopPos)>0:
+                        for popo4 in colonStopPos:
+                            name = name[:popo4].strip()+" "+name[popo4+1:].strip()
+                                       
+                            
+                    name = to_camel_case(name.strip())
                     if str(x)!="subClassOf":
                         if "Data" in prp:
-                            print >>  f, "###  http://data.latize.com/vocab/"+x+"\n" 
-                            print >>  f, "latize:"+x+" a "+prp," ;"
+                            print >>  f, "###  http://data.latize.com/vocab/"+name+"\n" 
+                            print >> f , "latize:"+name[:1].title()+name[1:]+" a "+prp," ;"
                             print >>  f, "    rdfs:range ",y+" ;"
                             dmn =""            
                             for z1 in o:
@@ -280,17 +378,17 @@ for a1 in fls2:
                             #     one for the Object itself, detailing the domain and range of classes
                             #     and one for the Data type of the column itself, detailing the domain class & range of values it can accept
                             objSplit = y.split()
-                            print >>  f, "###  http://data.latize.com/vocab/"+x+"\n" 
+                            print >>  f, "###  http://data.latize.com/vocab/"+name+"\n" 
                             # had earlier made col / prop name as the Obj Prop name
                             #print >>  f, "latize:"+x[:1].lower()+x[1:]+" a "+prp," ;"
-                            print >>  f, "latize:"+x[:1].lower()+x[1:]+" a "+prp," ;"
-                            print >>  f, "    rdfs:range ",objSplit[0][:7]+objSplit[0][7:8].title()+objSplit[0][8:]," ;"
+                            print >>  f, "latize:"+name[:1].lower()+name[1:]+" a "+prp," ;"
+                            print >>  f, "    rdfs:range ",objSplit[0][:7].strip()+objSplit[0][7:8].title().strip()+objSplit[0][8:].strip()," ;"
                             dmn =""            
                             for z1 in o:
-                                dmn = dmn + 'latize:'+z1[:1].title()+z1[1:] + ', '
+                                dmn = dmn + 'latize:'+z1[:1].title().strip()+z1[1:].strip() + ', '
                             dmn=dmn[:-2]
-                            print >>  f, '    rdfs:domain ',dmn,' ;'
-                            print >>  f, '    rdfs:label "'+rev(x)+ '" .\n\n'
+                            print >>  f, '    rdfs:domain ',dmn.strip(),' ;'
+                            print >>  f, '    rdfs:label "'+rev(x).strip()+ '" .\n\n'
                             # now print the Data Type Property for the column
                             #print >>  f, "latize:"+x+" a owl:DatatypeProperty;"
                             #print >>  f, "    rdfs:range ",objSplit[1]," ;"
@@ -304,16 +402,16 @@ for a1 in fls2:
                         dmn =""
                         if y not in ranges.columns:
                             if y not in parentClassPrint:
-                                print >>  f, "###  http://data.latize.com/vocab/"+y+"\n" 
+                                print >>  f, "###  http://data.latize.com/vocab/"+y.strip()+"\n" 
                                 print >>  f, "latize:"+y + " a owl:Class ;"
-                                print >>  f, '    rdfs:label "' +y+'". \n\n'
-                                parentClassPrint.append(y)
+                                print >>  f, '    rdfs:label "' +y.strip()+'". \n\n'
+                                parentClassPrint.append(y.strip())
                         for z1 in o:
                             dmn=""
                             dmn = dmn + 'latize:'+z1[:1].title()+z1[1:]
-                            print >>  f, "###  http://data.latize.com/vocab/"+rev(z1)+"\n" 
+                            print >>  f, "###  http://data.latize.com/vocab/"+rev(z1).strip()+"\n" 
                             print >>  f,  dmn + " a owl:Class ;"
-                            print >>  f, "    rdfs:subClassOf latize:"+y+";"
-                            print >>  f, '    rdfs:label "' +rev(z1)+'". \n\n'
+                            print >>  f, "    rdfs:subClassOf latize:"+y.strip()+";"
+                            print >>  f, '    rdfs:label "' +rev(z1).strip()+'". \n\n'
                 print >>  f, "\n\n"
         f.close()
