@@ -39,10 +39,11 @@ def pdfparser(data):
         f.write(data)
     
 # set the working directory
-path = "D:/training/vd/rnd/"
+path = "F:/banking/payments/"
 os.chdir(path)
 fls=os.listdir(path)
 
 for x in fls:
     if x[-3:]=="pdf":
         pdfparser(path+x)
+        
