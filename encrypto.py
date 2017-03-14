@@ -8,7 +8,7 @@ Created on Wed Aug 24 15:23:53 2016
 import bcrypt
 password = b"super secret password"
 # Hash a password for the first time, with a randomly-generated salt
-hashed = bcrypt.hashpw(password, bcrypt.gensalt(rounds=20))
+hashed = bcrypt.hashpw(password, bcrypt.gensalt(rounds=10))
 # Check that a unhashed password matches one that has previously been
 #   hashed
 if bcrypt.hashpw(password, hashed) == hashed:
