@@ -92,7 +92,7 @@ for a1 in fls2:
             ret=""
             for y in range(len(mo)):
                 #print y
-                if y<len(mo)-1:
+                if y<(len(mo)-1):
                     ret=ret+s[mo[y]:mo[y+1]].title()+" "
                 else:
                     ret = ret + s[mo[y]:].title()
@@ -183,6 +183,8 @@ for a1 in fls2:
             df2 = ranges.xs(x)
             typ1 = list(numpy.unique(df2))
             typ = [x78 for x78 in typ1 if type(x78)!=float]
+            #if str(x)=="subClassOf":
+            #    typ = [to_camel_case(e2) for e2 in typ]
             #print x, df2, typ
             #print x,typ
             for y in typ:
@@ -291,7 +293,7 @@ for a1 in fls2:
                         for z1 in o:
                             dmn=""
                             dmn = dmn + 'latize:'+z1[:1].title()+z1[1:]
-                            print "### 2  http://data.latize.com/vocab/"+rev(z1).strip()+"\n" 
+                            print "### 2  http://data.latize.com/vocab/"+z1[0].title()+z1[1:].strip()+"\n" 
                             print dmn + " a owl:Class ;"
                             print "    rdfs:subClassOf latize:"+y
                             print '    rdfs:label "'+rev(z1).strip()+'". \n\n'
@@ -302,6 +304,8 @@ for a1 in fls2:
             x=ranges.index[s1]
             df2 = ranges.xs(x)
             typ1 = list(numpy.unique(df2))
+            #if str(x)=="subClassOf":
+            #    typ = [to_camel_case(e2) for e2 in typ]
             typ = [x78 for x78 in typ1 if type(x78)!=float]
             #print x, df2, typ
             #print x,typ
@@ -365,17 +369,17 @@ for a1 in fls2:
                             name = name[:popo4].strip()+" "+name[popo4+1:].strip()
                                        
                             
-                    name = to_camel_case(name.strip())
+                    name = to_camel_case(name)
                     if str(x)!="subClassOf":
                         if "Data" in prp:
                             print >>  f, "###  http://data.latize.com/vocab/"+name+"\n" 
                             print >>  f, "latize:"+name+" a "+prp," ;"
-                            print >>  f, "    rdfs:range ",y+" ;"
+                            print >>  f, "    rdfs:range "+y+" ;"
                             dmn =""            
                             for z1 in o:
                                 dmn = dmn + 'latize:'+z1[:1].title()+z1[1:] + ', '
                             dmn=dmn[:-2]
-                            print >>  f, '    rdfs:domain ',dmn,' ;'
+                            print >>  f, '    rdfs:domain '+dmn+' ;'
                             print >>  f, '    rdfs:label "'+rev(x)+ '" .'
                         else:
                             # object Properties need two elements listed
@@ -385,14 +389,14 @@ for a1 in fls2:
                             print >>  f, "###  http://data.latize.com/vocab/"+name+"\n" 
                             # had earlier made col / prop name as the Obj Prop name
                             #print >>  f, "latize:"+x[:1].lower()+x[1:]+" a "+prp," ;"
-                            print >>  f, "latize:"+name+" a "+prp," ;"
-                            print >>  f, "    rdfs:range ",y[:7]+y[7:8].title()+to_camel_case(y[8:])," ;"
+                            print >>  f, "latize:"+name+" a "+prp+" ;"
+                            print >>  f, "    rdfs:range "+y[:7]+y[7:8].title()+to_camel_case(y[8:])+" ;"
                             dmn =""            
                             for z1 in o:
                                 dmn = dmn + 'latize:'+z1[:1].title().strip()+z1[1:].strip() + ', '
                             dmn=dmn[:-2]
-                            print >>  f, '    rdfs:domain ',dmn.strip(),' ;'
-                            print >>  f, '    rdfs:label "'+rev(x).strip()+ '" .\n\n'
+                            print >>  f, '    rdfs:domain '+dmn.strip()+' ;'
+                            print >>  f, '    rdfs:label "'+rev(x).strip()+ '" .'
                             # now print the Data Type Property for the column
                             #print >>  f, "latize:"+x+" a owl:DatatypeProperty;"
                             #print >>  f, "    rdfs:range ",objSplit[1]," ;"
@@ -408,14 +412,14 @@ for a1 in fls2:
                             if y not in parentClassPrint:
                                 print >>  f, "###  http://data.latize.com/vocab/"+y.strip()+"\n" 
                                 print >>  f, "latize:"+y + " a owl:Class ;"
-                                print >>  f, '    rdfs:label "' +y.strip()+'". \n\n'
+                                print >>  f, '    rdfs:label "' +y.strip()+'".\n'
                                 parentClassPrint.append(y.strip())
                         for z1 in o:
                             dmn=""
                             dmn = dmn + 'latize:'+z1[:1].title()+z1[1:]
-                            print >>  f, "###  http://data.latize.com/vocab/"+rev(z1).strip()+"\n" 
+                            print >>  f, "###  http://data.latize.com/vocab/"+z1[0].title()+z1[1:].strip()+"\n" 
                             print >>  f,  dmn + " a owl:Class ;"
                             print >>  f, "    rdfs:subClassOf latize:"+y.strip()+";"
-                            print >>  f, '    rdfs:label "' +rev(z1).strip()+'". \n\n'
-                print >>  f, "\n\n"
+                            print >>  f, '    rdfs:label "' +rev(z1).strip()+'".\n'
+                print >>  f, ""
         f.close()
