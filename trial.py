@@ -129,7 +129,7 @@ for a1 in fls2:
         props2.append('subClassOf')
 
         
-        # this new DF keeps track of which all classes is a particular property a part of
+        # this new DF keeps track of which all classes is a particular property originating from
         domain = pd.DataFrame(0,index=list(props2), columns = list(clsList2))
         
         
@@ -248,6 +248,7 @@ for a1 in fls2:
                     name = to_camel_case(name.strip())
                     if str(x)!="subClassOf":
                         if "Data" in prp:
+                            print "###  http://data.latize.com/vocab/"+name+"\n" 
                             print "latize:"+name+" a "+prp," ;"
                             print "    rdfs:range ",y+" ;"
                             dmn =""            
@@ -260,9 +261,10 @@ for a1 in fls2:
                             # object Properties need two elements listed
                             #     one for the Object itself, detailing the domain and range of classes
                             #     and one for the Data type of the column itself, detailing the domain class & range of values it can accept
-                            #objSplit = y.split()
+                            objSplit = y.split()
+                            print "###  http://data.latize.com/vocab/"+name+"\n" 
                             print "latize:"+name+" a "+prp," ;"
-                            print "    rdfs:range ",y[:7]+to_camel_case(y[7:])," ;"
+                            print "    rdfs:range ",y[:7]+y[7:8].title()+to_camel_case(y[8:])," ;"
                             dmn =""            
                             for z1 in o:
                                 dmn = dmn + 'latize:'+z1[:1].title()+z1[1:] + ', '
@@ -282,12 +284,14 @@ for a1 in fls2:
                         dmn =""
                         if y not in ranges.columns:
                             if y not in parentClass:
+                                print "### 1  http://data.latize.com/vocab/"+y.strip()+"\n" 
                                 print "latize:"+y + " a owl:Class ;"
                                 print '    rdfs:label "' +y.strip()+'". \n\n'
                                 parentClass.append(y)
                         for z1 in o:
                             dmn=""
                             dmn = dmn + 'latize:'+z1[:1].title()+z1[1:]
+                            print "### 2  http://data.latize.com/vocab/"+rev(z1).strip()+"\n" 
                             print dmn + " a owl:Class ;"
                             print "    rdfs:subClassOf latize:"+y
                             print '    rdfs:label "'+rev(z1).strip()+'". \n\n'
@@ -365,7 +369,7 @@ for a1 in fls2:
                     if str(x)!="subClassOf":
                         if "Data" in prp:
                             print >>  f, "###  http://data.latize.com/vocab/"+name+"\n" 
-                            print >> f , "latize:"+name[:1].title()+name[1:]+" a "+prp," ;"
+                            print >>  f, "latize:"+name+" a "+prp," ;"
                             print >>  f, "    rdfs:range ",y+" ;"
                             dmn =""            
                             for z1 in o:
@@ -381,8 +385,8 @@ for a1 in fls2:
                             print >>  f, "###  http://data.latize.com/vocab/"+name+"\n" 
                             # had earlier made col / prop name as the Obj Prop name
                             #print >>  f, "latize:"+x[:1].lower()+x[1:]+" a "+prp," ;"
-                            print >>  f, "latize:"+name[:1].lower()+name[1:]+" a "+prp," ;"
-                            print >>  f, "    rdfs:range ",objSplit[0][:7].strip()+objSplit[0][7:8].title().strip()+objSplit[0][8:].strip()," ;"
+                            print >>  f, "latize:"+name+" a "+prp," ;"
+                            print >>  f, "    rdfs:range ",y[:7]+y[7:8].title()+to_camel_case(y[8:])," ;"
                             dmn =""            
                             for z1 in o:
                                 dmn = dmn + 'latize:'+z1[:1].title().strip()+z1[1:].strip() + ', '
