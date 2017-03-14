@@ -14,6 +14,8 @@ import re
 import numpy
 import string
 import numpy as np
+import bcrypt
+
 
 
 # set the working directory
@@ -38,6 +40,10 @@ fls4=os.listdir(pathData)
 for a3 in fls4:
     if a3[-4:]=='.csv':
         if '__' in a3:
+            # create the final turtle file which will store all content
+            dstFin = path+'/op/'+a3[:-5]+'_1.ttl'
+            f = open(dstFin, 'w')
+        
             # read in the excel file and store it in a DF (data frame) called m
             dataDf = pd.read_csv(a3, header=0)
             dbNames = a3[:a3.find("__")]
@@ -66,10 +72,19 @@ for a3 in fls4:
                     uri = ""
                     for pkC in pkCols:
                         uri = uri.strip() +" "+ str(dataMtrx[rw][pkC])
-                    
+                    #print uri
+                    # Hash a password for the first time, with a randomly-generated salt
+                    hashed = bcrypt.hashpw(uri, bcrypt.gensalt(rounds=10))
+                    #print hashed
+                    uriHashed = hashed[7:]
+                    print >> f, "\nlatize:"+uriHashed+" a latize:"+ tblNames+";"
+                    for cl in range(ncol):
+                        print >> f, "    latize:"+dataDf.columns[cl]+' "'+str(dataMtrx[rw][cl])+'";'
+            print
+            f.close()
             
 # run the program for all XLSX files in the path
-#for a2 in fls3:
+#for a2 in fls3:-
 #    if a2[-4:]=='.csv':
 #       if '__' in a2:
 #        # read in the excel file and store it in a DF (data frame) called m
