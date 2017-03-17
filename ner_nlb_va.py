@@ -4,6 +4,8 @@ Created on Tue Sep 13 00:32:28 2016
 
 @author: Vidyut
 """
+
+## this program takes given .txt docs, applies Stanford NER to the same and outputs the NEs thus found alongside the type of entity
     
 # import all requisite packages
 import os
@@ -24,6 +26,7 @@ print distutils.sysconfig.get_python_lib()+'/nltk/tag/'
 # Import POSTagger and NERTagger from nltk.tag.stanford
 from nltk.tag.stanford import POSTagger
 from nltk.tag.stanford import NERTagger
+
 
 # Set JAVAHOME variable as below
 import os
@@ -61,8 +64,10 @@ for a in fls:
         txt = f.read()
         txt1 = ""
         # convert all the content to unicode - resolves the problem for funny characters. e.g. São Paulo becomes Sao Paulo
-        for sentSplit in txt.split('.'):
+         for sentSplit in txt.split('.'):
             txt1 = txt1 + ' ' + unicode(sentSplit, errors = 'ignore')
+            if "reference" in sentSplit.lower():
+                break
         # this loop below is supposed to run the POS Tagger on the tokenized words present in each sentence.
         # DO NOT RUN THE BELOW WITHOUT BDLF's EXPLICIT PERMISSION - Also note, I charge consultancy charges to answer & correct any stupid results occurring from running the below!
         #for sentSplit2 in txt1.split('.'):
