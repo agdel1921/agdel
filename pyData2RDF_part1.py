@@ -77,8 +77,7 @@ for a3 in fls4:
                     for pkC in pkCols:
                         uri = uri.strip() +" "+ str(dataMtrx[rw][pkC])
                     # Hash a password for the first time, with a randomly-generated salt
-                    hashed = mmh3.hash128(uri)
-                    uri_lst.append(mmh3.hash128(uri))
+                    uri_lst.append(long(mmh3.hash128(uri)))
                 else:
                     uri = dbNames.strip() + " " +tblNames.strip() + str(rw) 
                     hashed = mmh3.hash128(uri)
@@ -163,7 +162,7 @@ for a4 in fls5:
                     for rw3 in range(len(ogColList)):
                         refIndx = [mLoc for mLoc in range(len(refColList)) if ogColList[rw3]==refColList[mLoc]]
                         if len(refIndx)>0:
-                            uriPKs = [int(refUriList[i2]) for i2 in refIndx]
+                            uriPKs = [long(refUriList[i2]) for i2 in refIndx]
                             dataNewDf.ix[rw3, localPairMatch[rw2][2]] = uriPKs
                         else:
                             print "No resolution between"
