@@ -83,6 +83,8 @@ for k1 in range(len(keysOgTbl)):
 #dest1= "D:/training/pd_ag/"+database+".csv"
 dest1= "F:/latize/auto_ontology/"+database+".csv"
 dbMetadataOvrall.to_csv(dest1, header=True, index=False)
+dest2 = "F:/latize/auto_ontology/"+database+"_keys.csv"
+dbMetadataKeys.to_csv(dest2, header=True, index=False)
 
 # determine the tables for which we want to extract data from the DB
 t_name = list(np.unique(dbMetadataOvrall.TABLE_NAME))
