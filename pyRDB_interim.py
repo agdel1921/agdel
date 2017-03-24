@@ -13,7 +13,7 @@ import numpy as np
 
 hostname = 'localhost'
 username = 'root'
-password = 'vidyut@home'
+password = 'vidyut@latize'
 database = 'sakila'
 
 # Simple routine to run a query on a database and print the results:
@@ -80,8 +80,8 @@ for k1 in range(len(keysOgTbl)):
         
 
     
-#dest1= "D:/training/pd_ag/"+database+".csv"
-dest1= "F:/latize/auto_ontology/"+database+".csv"
+dest1= "D:/training/pd_ag/"+database+".csv"
+#dest1= "F:/latize/auto_ontology/"+database+".csv"
 dbMetadataOvrall.to_csv(dest1, header=True, index=False)
 
 # determine the tables for which we want to extract data from the DB
@@ -100,12 +100,12 @@ for tn in t_name:
     sql2 = "SELECT * from " + tn +";"
     # store the result of the SQL command into a Pandas DF
     d5 = pd.read_sql(sql2,myConnection)
-    #dest2= "D:/training/pd_ag/data/"+tn+".csv"
     db_TblName = db+"__"+tn
-    dest2= "F:/latize/auto_ontology/data/"+db_TblName+".csv"
+    #dest2= "F:/latize/auto_ontology/data/"+db_TblName+".csv"
+    dest2= "D:/training/pd_ag/data/"+db_TblName+".csv"
     d5.to_csv(dest2, header=True, index=False)
 
 myConnection.close()
 
-#execfile("D:/CodeLah!/latize/rdb2owl.py")
-#execfile("D:/CodeLah!/latize/trial.py")
+execfile("D:/CodeLah!/latize/rdb2owl.py")
+execfile("D:/CodeLah!/latize/trial.py")

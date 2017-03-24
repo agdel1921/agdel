@@ -26,7 +26,6 @@ with myConnection.cursor() as cursor:
     #sql = "SELECT * from information_schema.columns WHERE table_schema = '" + database +"';"
     sql = "SELECT * from information_schema.columns WHERE table_schema = '" + database +"';"
     
-    sql1 = "SELECT * from information_schema.table_constraints WHERE table_schema = '" + database +"';"    
     sql11= "SELECT TABLE_SCHEMA,TABLE_NAME,COLUMN_NAME,REFERENCED_TABLE_SCHEMA,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_SCHEMA IS NOT NULL;" 
    
     # store the result of the SQL command into a Pandas DF

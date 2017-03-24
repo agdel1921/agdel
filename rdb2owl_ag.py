@@ -12,7 +12,7 @@ import os
 import numpy as np
 
 # set the working directory
-path = "D:/training/pd_ag/"
+path = "D:/Latize/Ontology/RDB2OWL_VER1.2/"
 os.chdir(path)
 fls1=os.listdir(path)
 
@@ -34,7 +34,7 @@ for a2 in fls1:
     if a2[-3:]=='csv':
         # read in the CSV file and store it in a DF (data frame) called m
         csvPd = pd.read_csv(a2, header=0)
-        dest1 = path+"chk/"+a2[:-4]+".xlsx"
+        dest1 = path+a2[:-4]+".xlsx"
         print dest1
 
         # find loaded DF col names
@@ -70,22 +70,22 @@ for a2 in fls1:
                         db = class_superClass[y]
                         opMtrx.append([k, db, "", "", ""])
                     # in case colName is neither a Primary Key (PRI) or a Foreign Key (MUL)
-                    if keyType =="FOR":
+                    if keyType =="MUL":
                         ind = [ty for ty in range(len(class_name)) if  class_name[ty] != class_name[y]]
                         #print numpy.unique([class_name[ki] for ki in range(len(class_name)) if ki in ind])  
                         for op in ind:
                             if class_props[op]==class_props[y]:
                                if prop_KeyType[op]=="PRI":
                                     # uncomment below condition to ensure the PK and FK data types match as well
-                                    # if dataType ==prop_dataType[op]:
-                                    print class_props[y], "in",class_name[y], "points to ",class_name[op]
-                                    opMtrx.append(["","",colName,"latize:"+class_name[op]+" "+classifyDataType(dataType,y),""])
+                                    if dataType ==prop_dataType[op]:
+                                        print class_props[y], "in",class_name[y], "points to ",class_name[op]
+                                        opMtrx.append(["","",colName,"latize:"+class_name[op]+" "+classifyDataType(dataType,y),""])
                     else:
                         opMtrx.append(["","",colName,classifyDataType(dataType,y),""])
             opMtrx.append(["","","","",""])
         
         opPd = pd.DataFrame(opMtrx, columns = ['CLASS', 'SubClassOf', 'PROPERTIES', 'PERMISSIBLE VALUES','REMARKS'])
-        #opPd.to_csv("D:/training/pd_ag/chk/trial.csv", header=True, index=False)
+        #opPd.to_csv("D:/Latize/Ontology/rdb2owl_ver1.1/trial.csv", header=True, index=False)
         opPd.to_excel(dest1, header=True, index=False)
         print dest1
  

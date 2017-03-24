@@ -19,8 +19,8 @@ import bcrypt
 
 
 # set the working directory
-#path = "D:/training/randomProg/c2r/"
-path = "F:/latize/auto_ontology/"
+path = "D:/training/pd_ag/"
+#path = "F:/latize/auto_ontology/"
 os.chdir(path)
 fls3=os.listdir(path)
 
@@ -29,9 +29,9 @@ for a2 in fls3:
     if a2[-4:]=='.csv':
         structDf = pd.read_csv(a2, header=0)
 
+structDf = pd.read_csv("D:/training/pd_ag/sakila.csv", header=0)
 
-
-pathData = "F:/latize/auto_ontology/data/"
+pathData = "D:/training/pd_ag/data/"
 os.chdir(pathData)
 fls4=os.listdir(pathData)
 
@@ -72,7 +72,7 @@ for a3 in fls4:
                     uri = ""
                     for pkC in pkCols:
                         uri = uri.strip() +" "+ str(dataMtrx[rw][pkC])
-                    #print uri
+                    print uri
                     # Hash a password for the first time, with a randomly-generated salt
                     hashed = bcrypt.hashpw(uri, bcrypt.gensalt(rounds=10))
                     #print hashed

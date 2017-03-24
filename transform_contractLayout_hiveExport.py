@@ -11,24 +11,24 @@ import os
 
 # set the working directory
 path = "/home/latize/Downloads/ds/"
-path = "D:/training/TWG_overall/data_harmonisation/JPN/JPN_Hive_op/split/"
 os.chdir(path)
 fls=os.listdir(path)
 
-opPd = pd.read_csv("D:/training/TWG_overall/data_harmonisation/JPN/JPN_Hive_op/split/x00000011", sep='","', header = None)
+opPd = pd.read_csv("/home/latize/Downloads/ds/026.csv", header = 0)
+print "done"
+colNames = list(opPd.columns)
 
+opPd = pd.DataFrame(columns = colNames)
 
-
+ct=1
 # run the program for all CSV files in the path
 for a in fls:
     if a[0]=='x':
 		if a!= "x00000000":
 			# read in the CSV file and store it in a DF (data frame) called m
-			csvPd = pd.read_csv(, sep='","', header=None)
-              		print a
-    			csvPd.columns = list(opPd.columns)
-             		#opPd = opPd.append(csvPd, ignore_index=True)
-			print a
-
-dest = path+"bwcontractlayout.csv"
-opPd.to_csv(dest, header=True, index=False)
+			csvPd = pd.read_csv(a, sep='","', header=None)
+			csvPd.columns = colNames
+			dst= path+a[-3:]+".csv"
+			csvPd.to_csv(dst, header = True, index = False)
+			print dst
+print ""

@@ -41,9 +41,11 @@ print len(dictPd)
 pName = list(dictPd['Preferred name'].values.ravel())
 npName = [t for t in dictPd['Non-preferred name'].values.ravel()]
 
+
 word=[]
 entity=[]
 np_entity=[]
+
 
 # run the program for all CSV files in the path
 for a in fls:

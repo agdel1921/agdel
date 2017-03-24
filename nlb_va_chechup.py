@@ -25,49 +25,55 @@ init2 =[]
 # run the program for all CSV files in the path
 for a in fls:
     if a[-3:]=='csv':
-        if a!="final_NER.csv":
+        if a!="final_NER.csv    ":
             init.append(a[:-8])
             ct = ct + 1
 
-
+init = init[2:]
 
 
 path = "D:/training/NER/VA/output/temp/"
 os.chdir(path)
 fls=os.listdir(path)
 
-
-ct3 =0
-f = pd.DataFrame(columns= ['Article', 'TTE Preferred Name', 'Type', 'Mentions'])
-for a in fls:
-    if a[-3:]=='csv':
-        print a
-#        csvPd = pd.read_csv(a, header=0)
-#        f = f.append(csvPd)
-#        ct3 = ct3 + 1
-#f.to_csv("final_NER.csv", index=False, header = True)        
+if 'final_NER.csv' not in fls:
+    ct3 =0
+    f = pd.DataFrame(columns= ['Article', 'TTE Preferred Name', 'Type', 'Mentions'])
+    for a in fls:
+        if a[-3:]=='csv':
+            print a
+            csvPd = pd.read_csv(a, header=0)
+            f = f.append(csvPd)
+            ct3 = ct3 + 1
+    f.to_csv("final_NER.csv", index=False, header = True)        
 
 ct = 0
 fin =[]
 # run the program for all CSV files in the path
-for a in fls:
+for a in fls:   
     if a[-3:]=='csv':
         if a!="final_NER.csv":
             print a
             fin.append(a[:-14])
             ct = ct + 1
 
-ft =[]
+# find the missing files / files not generated
+miss=[]
 for x in init:
     if x not in fin:
-        print x
-        ft.append(x+"_NER.csv")
+        miss.append(x)
+
+#ft =[]
+#for x in init:
+#    if x not in fin:
+#        print x
+#        ft.append(x+"_NER.csv")
         
 
-f2 = pd.DataFrame(columns= ['Article', 'TTE Preferred Name', 'Type', 'Mentions'])
-for s in ft:
-    dest3 = s[:-4]+"_final.csv"
-    f2.to_csv(dest3, index=False, header = True)
+#f2 = pd.DataFrame(columns= ['Article', 'TTE Preferred Name', 'Type', 'Mentions'])
+#for s in ft:
+#    dest3 = s[:-4]+"_final.csv"
+#    f2.to_csv(dest3, index=False, header = True)
 
 for k in fls:
     if k[-3:]=='csv':
