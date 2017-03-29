@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Mar 15 00:04:02 2017
-
 @author: Ashu & vsdaking
 """
 
@@ -27,13 +26,7 @@ fls3=os.listdir(path)
 
 for a2 in fls3:
     if a2[-4:]=='.csv':
-<<<<<<< HEAD
         structDf = pd.read_csv(a2, header=0)
-
-structDf = pd.read_csv("D:/training/pd_ag/sakila.csv", header=0)
-
-pathData = "D:/training/pd_ag/data/"
-=======
         # find each CSV ontology file (these should not contain '_keys' in the name)
         if "_keys" not in a2:
             structDf = pd.read_csv(a2, header=0)
@@ -42,9 +35,12 @@ pathData = "D:/training/pd_ag/data/"
             if kFileName in fls3:
                 structKeysDf = pd.read_csv(kFileName, header = 0)
 
+structDf = pd.read_csv("D:/training/pd_ag/sakila.csv", header=0)
+
+pathData = "D:/training/pd_ag/data/"
+
 # read in all the provided Data files 
-pathData = "F:/latize/auto_ontology/data/"
->>>>>>> origin/master
+#pathData = "F:/latize/auto_ontology/data/"
 os.chdir(pathData)
 fls4=os.listdir(pathData)
 
@@ -93,14 +89,14 @@ for a3 in fls4:
             # store the updated datasets (these now contain the URI for each row)
             if len(uri_lst)==len(dataDf):
                 dataDf['uri'] = pd.Series(uri_lst, index = dataDf.index)
-                dst2 = "F:/latize/auto_ontology/data_uri/"+a3
+                dst2 = "D:/training/pd_ag/data_uri/"+a3
                 dataDf.to_csv(dst2, header=True, index=False)
                 print dst2, len(uri_lst)
             # even if no 
             else:
                 print "Check out", a3, "NOW!!"
                 break;
-                dst3 = "F:/latize/auto_ontology/data_uri/"+a3[:-4]+"_unmodified.csv"
+                dst3 = "D:/training/pd_ag/data_uri/"+a3[:-4]+"_unmodified.csv"
                 dataDf.to_csv(dst3, header=True, index=False)
             print
 
@@ -108,12 +104,15 @@ for a3 in fls4:
 # resolve the URIs
 # read in all the provided Data files 
 print "Reading files with URI"
-pathData = "F:/latize/auto_ontology/data_uri/"
+pathData = "D:/training/pd_ag/data_uri/"
 os.chdir(pathData)
 fls5=os.listdir(pathData)
 
+stagePath = "D:/training/pd_ag/data/modified/"
 
 globalPairMatch = []
+
+fls5 = ['sakila__city.csv']
 
 # Generate the URI for each row in each file first
 # run the program for all data CSV files in the path 'pathData'
@@ -163,19 +162,22 @@ for a4 in fls5:
                 if localPairMatch[rw2][0] == localPairMatch[rw2][3]:
                     print "same db"
                     print "let's resolve some URIs!"
-                    ogColList = list(dataNewDf[[localPairMatch[rw2][2]]])
+                    #ogColList = list(dataNewDf[[localPairMatch[rw2][2]]])
+                    ogColList = list(dataNewDf[[localPairMatch[rw2][2]]].values.flatten())
                     refTblDf = pd.read_csv(localPairMatch[rw2][3]+"__"+localPairMatch[rw2][4]+".csv", header=0)
                     refUriList = list(refTblDf.uri)
-                    refColList = list(refTblDf[[localPairMatch[rw2][5]]])
+                    refColList = list(refTblDf[[localPairMatch[rw2][5]]].values.flatten())
                     for rw3 in range(len(ogColList)):
                         refIndx = [mLoc for mLoc in range(len(refColList)) if ogColList[rw3]==refColList[mLoc]]
+                        print rw3, refIndx
                         if len(refIndx)>0:
                             uriPKs = [long(refUriList[i2]) for i2 in refIndx]
                             dataNewDf.ix[rw3, localPairMatch[rw2][2]] = uriPKs
+                            
                         else:
                             print "No resolution between"
                             print localPairMatch[rw2]
-            dstInterim = pathData + a4[:-4]+"__uri_modified.csv"
+            dstInterim = stagePath + a4[:-4]+"__uri_modified.csv"
             dataNewDf.to_csv(dstInterim, header = True, index = False)
                             
                     #dataNewDf.ix[]
