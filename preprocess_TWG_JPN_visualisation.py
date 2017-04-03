@@ -46,11 +46,20 @@ def remove_empty_cols_from_pd(df1):
         nan_Cols = [1 for elmnt in lstTmp if elmnt==0.0]
         print colName, cNum
         if len(nan_Cols)>0:
-            if len(nan_Cols)/float(len(df1))>0.98:
+            if sum(nan_Cols)/float(len(df1))>0.95:
                 print "\t", sum(nan_Cols), len(lstTmp)
                 copyDf1.drop(colName, axis=1, inplace=True, errors = 'ignore')
     return copyDf1
-        
+    
+# function to format Date columns in DF
+def format_date(df2):
+    for col in range(len(df2.columns)):
+        colName2 = df2.columns[col]
+        lstTmp2 = list(df2[[colName2]].values.flatten())
+        if 'date' in colName2:
+            df2[[colName2]] = pd.to_datetime(lstTmp2, format= '%Y%m%d', errors = 'coerce')
+    return df2
+    
 #fls = ['bw_claims-000.csv']
 #fls = [u for u in fls if u!='bw_claims-057.txt']
 
@@ -58,6 +67,7 @@ for a in fls:
     if a=='bw_claims.csv':
         print a
         claimPd = pd.read_csv(a, header = 0, low_memory = True)
+        claimPd = claimPd.head(500000)
         #m.columns = cols
         #m.to_csv(path+a[:-3]+"csv", header=True, index=False)
         print "read ", a
@@ -88,7 +98,9 @@ for a in fls:
         
         # remove the empty columns from DF to get a leaner and more useful DF
         copyClaimPd = remove_empty_cols_from_pd(claimPd)   
-                
+        
+        copyClaimPd = format_date(copyClaimPd)     
+        
         # update the original DF with the newly updated values
         copyClaimPd['country'] = plc_reorganised
         copyClaimPd['businesstype'] = bType_reorganised
@@ -97,6 +109,7 @@ for a in fls:
         
         # store the claimPd into a new csv
         copyClaimPd.to_csv(path+a[:-4]+"_modified.csv", header=True, index=False)
+        claimPd = None
         
     elif a == "bw_contracts_matched.csv":
         print a
@@ -104,6 +117,7 @@ for a in fls:
         #m.columns = cols
         #m.to_csv(path+a[:-3]+"csv", header=True, index=False)
         print "read ", a
+        contractPd = contractPd.head(500000)
         
         # populate the countries randomly
         place2 = list(contractPd['country'])
@@ -120,10 +134,23 @@ for a in fls:
         # remove the empty columns from DF to get a leaner and more useful DF
         copyContractPd = remove_empty_cols_from_pd(contractPd)
         
+        copyContractPd = format_date(copyContractPd)     
+        
+        
         # update the original DF with the newly updated values
         copyContractPd['country'] = plc_reorganised2
         copyContractPd ['businesstype'] = bType_reorganised2
         
         # store the claimPd into a new csv
         copyContractPd .to_csv(path+a[:-4]+"_modified.csv", header=True, index=False)
-        
+        contractPd = None
+
+x = pd.merge(copyClaimPd.drop_duplicates(subset=['contractseqnum','company','contractnum']), copyContractPd.drop_duplicates(subset=['contractseqnum','company','contractnum']), how = 'inner', on = ['contractseqnum','company','contractnum'])
+y = remove_empty_cols_from_pd(x)
+#y = format_date(y)
+y.to_csv(path+"merged_both.csv", header=True, index=False)
+len(x)
+len(y)
+
+#copyClaimPd = None
+#copyContractPd = None
