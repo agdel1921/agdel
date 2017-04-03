@@ -8,11 +8,11 @@ Created on Thu Mar 30 19:41:34 2017
 import os
 import pandas as pd
 
-path = "D:/training/TWG_overall/data_harmonisation/final_output_JPN/split/work/"
+path = "D:/training/TWG_overall/data_harmonisation/final_output_JPN/og_files/contracts_matched/"
 
 os.chdir(path)
 
-fls = os.listdir("D:/training/TWG_overall/data_harmonisation/final_output_JPN/split/work/")
+fls = os.listdir(path)
 #fls = [u for u in fls if u!='bw_claims-057.txt']
 for a in fls:
     if a[-4:]=='.txt':
