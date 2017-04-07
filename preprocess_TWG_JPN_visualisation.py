@@ -12,6 +12,7 @@ import numpy as np
 import copy
 import math
 from collections import Counter
+import datetime
 
 path = "D:/training/TWG_overall/data_harmonisation/final_output_JPN/og_files/"
 
@@ -67,7 +68,7 @@ for a in fls:
     if a=='bw_claims.csv':
         print a
         claimPd = pd.read_csv(a, header = 0, low_memory = True)
-        claimPd = claimPd.head(500000)
+        #claimPd = claimPd.head(500000)
         #m.columns = cols
         #m.to_csv(path+a[:-3]+"csv", header=True, index=False)
         print "read ", a
@@ -117,7 +118,7 @@ for a in fls:
         #m.columns = cols
         #m.to_csv(path+a[:-3]+"csv", header=True, index=False)
         print "read ", a
-        contractPd = contractPd.head(500000)
+        #contractPd = contractPd.head(500000)
         
         # populate the countries randomly
         place2 = list(contractPd['country'])
@@ -146,11 +147,39 @@ for a in fls:
         contractPd = None
 
 x = pd.merge(copyClaimPd.drop_duplicates(subset=['contractseqnum','company','contractnum']), copyContractPd.drop_duplicates(subset=['contractseqnum','company','contractnum']), how = 'inner', on = ['contractseqnum','company','contractnum'])
+
+claimStatusLst = list(x.claimstatus)
+clmPaid = list(x.claimamt_adjnet)
+clmPaid1 = x.claimamt_adjnet
+prdPurchsPrice = list(x.productpurchaseprice)
+premiumPrice = list(x.contractpurchaseprice)
+clmMoreThanPrdPrice = []
+profitLst = []
+
+ct=0
+ct2 = 0
+for z in range(len(clmPaid)):
+    if claimStatusLst[z]=="PAID" or claimStatusLst[z]=="PAYMENT ORDERED" or claimStatusLst[z]=="COMPLETED PAYMENT PENDING":
+        if clmPaid[z] >= prdPurchsPrice[z]:
+            print z, claimStatusLst[z], clmPaid[z], prdPurchsPrice[z]
+            ct=ct+1
+            clmMoreThanPrdPrice.append(z)
+        if clmPaid[z] >= premiumPrice[z]:
+            print '\t', z, claimStatusLst[z], clmPaid[z], premiumPrice[z]
+            ct2=ct2+1
+        profitLst.append(math.fabs(float(premiumPrice[z]) - float(clmPaid[z])))
+    else:
+        profitLst.append(float(premiumPrice[z]))
+print ct, ct2
+x['profit'] = pd.Series(profitLst)
+
+#y = x.copy()
 y = remove_empty_cols_from_pd(x)
 #y = format_date(y)
-y.to_csv(path+"merged_both.csv", header=True, index=False)
+y.to_csv(path+"merged_both_trial.csv", header=True, index=False)
 len(x)
 len(y)
 
 #copyClaimPd = None
 #copyContractPd = None
+
