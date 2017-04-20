@@ -9,6 +9,10 @@ import os
 import pandas as pd
 import numpy as np
 import math
+import copy
+import sys
+
+sys.setrecursionlimit(20000)
 
 # define the path where the files are located
 path = "D:/training/TWG_overall/data_harmonisation/KR/final_files_to_use_170407/"
@@ -151,11 +155,13 @@ globalTblsConnectd = []
 for z2 in range(len(kr_tbls)):
     tmpSchemaPd = finSchema.loc[finSchema['Table_Name']==kr_tbls[z2]]
     tmpSchemaFieldCode = list(tmpSchemaPd.Field_Code)
+    tmpSchemaFieldCode_shortnd = [itm[2:] for itm in tmpSchemaFieldCode]
     tmpSchemaFieldDesc = list(tmpSchemaPd.Field_Desc)
     
     tmpPkPd = finPks.loc[finPks['Table_Name']!=kr_tbls[z2]]
     tmpPkTbl = list(tmpPkPd.Table_Name)
     tmpPkFieldCode = list(tmpPkPd.Field_Code)
+    tmpPkFieldCode_shortnd = [itm2[2:] for itm2 in tmpPkFieldCode]
     tmpPkFieldDesc = list(tmpPkPd.Field_Desc)
     
     localPksInSchema = []
@@ -168,6 +174,14 @@ for z2 in range(len(kr_tbls)):
                 if tmpPkFieldCode[z5]==tmpSchemaFieldCode[z4]:
                     localPksInSchema.append([kr_tbls[z2], tmpSchemaFieldCode[z4], tmpPkTbl[z5], tmpPkFieldCode[z5], tmpSchemaFieldDesc[z4], tmpPkFieldDesc[z5]])
                     globalPksInSchema.append([kr_tbls[z2], tmpSchemaFieldCode[z4], tmpPkTbl[z5], tmpPkFieldCode[z5], tmpSchemaFieldDesc[z4], tmpPkFieldDesc[z5]])
+        elif tmpSchemaFieldCode_shortnd[z4] in tmpPkFieldCode_shortnd:
+            for z5 in range(len(tmpPkFieldCode_shortnd)):
+                if tmpPkFieldCode_shortnd[z5]==tmpSchemaFieldCode_shortnd[z4]:
+                    if tmpSchemaFieldDesc[z4] == tmpPkFieldDesc[z5]:
+                        localPksInSchema.append([kr_tbls[z2], tmpSchemaFieldCode[z4], tmpPkTbl[z5], tmpPkFieldCode[z5], tmpSchemaFieldDesc[z4], tmpPkFieldDesc[z5]])
+                        globalPksInSchema.append([kr_tbls[z2], tmpSchemaFieldCode[z4], tmpPkTbl[z5], tmpPkFieldCode[z5], tmpSchemaFieldDesc[z4], tmpPkFieldDesc[z5]])
+        else:
+            continue
         # match PKs based on Field Description
         for z6 in range(len(tmpPkFieldDesc)):
             if tmpSchemaFieldDesc[z4].lower().strip()==tmpPkFieldDesc[z6].lower().strip():
@@ -179,6 +193,8 @@ for z2 in range(len(kr_tbls)):
                         print kr_tbls[z2], tmpSchemaFieldCode[z4], tmpPkTbl[z6], tmpPkFieldCode[z6], tmpSchemaFieldDesc[z4], tmpPkFieldDesc[z6], "already in globalPksInSchema"
     if len(localPksInSchema)>0:
         localPd = pd.DataFrame(localPksInSchema, columns = ['FK_Table', 'FK', 'PK_Table', 'PK', 'FK_Desc', 'PK_Desc'])
+        locFKey = list(localPd.FK)
+        locFkDesc = list(localPd.FK_Desc)
         locPkTbl = list(localPd.PK_Table)
         locPKey = list(localPd.PK)
         locPkDesc = list(localPd.PK_Desc)
@@ -189,10 +205,12 @@ for z2 in range(len(kr_tbls)):
             if len(pKInLocalIndx)==len(pkTblKeys):
                 # the name fkKey simply refers to the pkKey in the localPd - got lost while coding
                 # keep the above in mind and it will not confuse :p
-                fkKeyCode = [locPKey[z9].upper().strip() for z9 in pKInLocalIndx]
+                locFKey_for_referred_tbl = [str(locFKey[z9].upper().strip()) for z9 in pKInLocalIndx]
+                locFkDesc_for_referred_tbl = [str(locFkDesc[z10].strip()) for z10 in pKInLocalIndx]
+                fkKeyCode = [str(locPKey[z11].upper().strip()) for z11 in pKInLocalIndx]
                 fkKeyCode_Cleaned = [fkKeyCode[k10][2:] for k10 in range(len(fkKeyCode))]
                 fkKeyCode_Cleaned.sort()
-                fkKeyDesc = [locPkDesc[z11] for z11 in pKInLocalIndx]
+                fkKeyDesc = [str(locPkDesc[z12]) for z12 in pKInLocalIndx]
                 pkKeyCode = list(pkTblKeys.Field_Code)
                 pkKeyCode_Cleaned = [pkKeyCode[k12][2:] for k12 in range(len(pkKeyCode))]
                 pkKeyCode_Cleaned.sort()
@@ -206,14 +224,58 @@ for z2 in range(len(kr_tbls)):
                 if pkKeyCode_Cleaned==fkKeyCode_Cleaned:
                     print "Match between",kr_tbls[z2] ,"and", distLocPkTbl[z7],"on PKs"
                     if [kr_tbls[z2], distLocPkTbl[z7]] not in localTblsConnectd and [kr_tbls[z2], distLocPkTbl[z7]] not in globalTblsConnectd:
-                        localTblsConnectd.append([kr_tbls[z2], distLocPkTbl[z7]])
-                        globalTblsConnectd.append([kr_tbls[z2], distLocPkTbl[z7]])
+                        localTblsConnectd.append([kr_tbls[z2], distLocPkTbl[z7], "PK", locFKey_for_referred_tbl, locFkDesc_for_referred_tbl, fkKeyCode, fkKeyDesc])
+                        globalTblsConnectd.append([kr_tbls[z2], distLocPkTbl[z7], "PK", locFKey_for_referred_tbl, locFkDesc_for_referred_tbl, fkKeyCode, fkKeyDesc])
                 elif chk==0:
                     print "Match between",kr_tbls[z2] ,"and", distLocPkTbl[z7],"on PK descriptions"
                     if [kr_tbls[z2], distLocPkTbl[z7]] not in localTblsConnectd and [kr_tbls[z2], distLocPkTbl[z7]] not in globalTblsConnectd:
-                        localTblsConnectd.append([kr_tbls[z2], distLocPkTbl[z7]])
-                        globalTblsConnectd.append([kr_tbls[z2], distLocPkTbl[z7]])
+                        localTblsConnectd.append([kr_tbls[z2], distLocPkTbl[z7],  "Desc.", locFKey_for_referred_tbl, locFkDesc_for_referred_tbl, fkKeyCode, fkKeyDesc])
+                        globalTblsConnectd.append([kr_tbls[z2], distLocPkTbl[z7], "Desc.",locFKey_for_referred_tbl, locFkDesc_for_referred_tbl, fkKeyCode, fkKeyDesc])
                 else:
                     print "\n\n\n Not sure why, but when tables", kr_tbls[z2], "and",distLocPkTbl[z7], "are matched,",distLocPkTbl[z7],"seems to have same number of rows in the match as it's PKs but the PK vals are not the same"
 
+connectedTblsPd = pd.DataFrame(globalTblsConnectd, columns = ['FK_Table', 'PK_Table', 'Reason_of_meeting', 'FK_List','FK_Desc', 'PK_List', 'PK_Desc'])
+connectedTblsPd.to_csv(path+"final_tbls_170420.csv", header=True, index=False)
 # yayyy - we can match 152 tables amongst themselves!
+
+
+## determine which table results in maximum other tables being joined
+
+# base it on the list of tables we have finally managed to connect above
+fkTbl_final = list(connectedTblsPd.FK_Table)
+pkTbl_final = list(connectedTblsPd.PK_Table)
+
+distFkFinal = list(np.unique(fkTbl_final))
+
+interimLst_final = []
+listCompleted_FkTbls = []
+
+def return_list_of_PkTbls(name_of_fkTbl):
+    interimLst_of_PkTbls = []
+    for z14 in range(len(fkTbl_final)):
+        if fkTbl_final[z14]==name_of_fkTbl:
+            if pkTbl_final[z14] not in interimLst_of_PkTbls:
+                interimLst_of_PkTbls.append(pkTbl_final[z14])
+    print name_of_fkTbl, len(interimLst_of_PkTbls)
+    return interimLst_of_PkTbls
+
+for z15 in range(len(distFkFinal)):
+    interimLst_final.append([distFkFinal[z15], len(return_list_of_PkTbls(distFkFinal[z15])), return_list_of_PkTbls(distFkFinal[z15])])
+
+finalLst_linkedTbls = copy.deepcopy(interimLst_final)
+
+for z16 in range(len(interimLst_final)):
+    print interimLst_final[z16][0], interimLst_final[z16][2]
+    for z17 in interimLst_final[z16][2]:
+        if z17 in distFkFinal:
+            indx = distFkFinal.index(z17)
+            for z18 in interimLst_final[indx][2]:
+                if z18 not in finalLst_linkedTbls[z16][2]:
+                    if z18!=finalLst_linkedTbls[z16][0]:
+                        finalLst_linkedTbls[z16][2].append(z18)
+
+
+                        
+for z19 in range(len(interimLst_final)):
+    finalLst_linkedTbls[z19][1] = len(finalLst_linkedTbls[z19][2])
+    print interimLst_final[z19][0], len(interimLst_final[z19][2]), len(finalLst_linkedTbls[z19][2])
