@@ -30,17 +30,22 @@ fls_schema = os.listdir(path_schema)
 
 print "Read final CSV"
 #finalDf1 = pd.read_csv(path_op+'kr_contracts_2.csv', header=0, low_memory=False)
-finalDf1 = pd.concat(pd.read_csv(path_op+"jpn_contracts1.csv", header = 0, chunksize = 16*1024, low_memory=True))
+#finalDf1 = pd.concat(pd.read_csv(path_op+"jpn_contracts1.csv", header = 0, chunksize = 16*1024, low_memory=True, nrows=2000000))
+finalDf1 = pd.concat(pd.read_csv(path_op+"jpn_contracts_top_1_mill.csv", header = 0, low_memory=True, chunksize = 16*1024))
 print "Finished reading final CSV"
 
 fin_df_cols = list(finalDf1.columns)
+if len(fin_df_cols)<3:
+    fin_df_cols = fin_df_cols[0].split(',')
+
+
 fin_df_cols2 = []
 
 for z1 in fin_df_cols:
     if '.' in z1:
-	fin_df_cols2.append(z1[z1.index('.')+1:])
+        fin_df_cols2.append(z1[z1.index('.')+1:])
     else:
-	fin_df_cols2.append(z1)
+         fin_df_cols2.append(z1)
 
 finalDf1.columns = fin_df_cols2
 
@@ -119,28 +124,30 @@ else:
     print len(inputFile1), "rows selected"
     sampleFinalDataSetIndx = random.sample(xrange(len(finalDf1)), len(inputFile1))
 
-sampleFinalDf = finalDf.loc[sampleFinalDataSetIndx]
+sampleFinalDf = finalDf1.loc[sampleFinalDataSetIndx]
 print len(sampleFinalDf), "were the rows in the final DF used for comparision"
 print "Generated random final data set"
 
 pks = []
-for z3 in inpCols:
-    for z4 in inputFile_pks:
-        if z4.lower() in z3:
-            pks.append(z3)
+iCols = copy.copy(inpCols)
+for z3 in inputFile_pks:
+    for z4 in iCols:
+        if z3.lower() in z4:
+            pks.append(z4)
+            iCols.remove(z4)
             break
 print pks, "are the final PKs present in the input file"
 
 for z4 in pks:
-    ct=0
-    if z4 not in finalDf1.columns:
-	print z4, "is not in Final DF"
-	ct=1
-    if z4 not in inputFile1.columns:
-	print z4, "is not in Final DF"
-	ct=1
-    if ct==0:
-	print z4, "is everywhere"
+	ct=0
+	if z4.lower().strip() not in fin_df_cols2:
+		print z4, "is not in Final DF"
+		ct=1
+	if z4.lower().strip() not in inpCols:
+		print z4, "is not in Final DF"
+		ct=1
+	if ct==0:
+		print z4, "is everywhere"
 
 
 correspondingInpDf2 = pd.merge(inputFile1, sampleFinalDf, how='inner', on = pks)
